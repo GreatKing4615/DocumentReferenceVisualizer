@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Document_Reference_Visualizer
 {
     public class Document
     {
-        int x { get; set; }
-        int y { get; set; }
-        string path { get; set; }
-        List<string> reference { get; set; }
-
-        public void ReadDocument()
-        {
-
-        }
-
+        public int x { get; set; }
+        public int y { get; set; }
+        public string path { get; set; }
+        public string fileName{ get; set; }
+        public List<string> reference { get; set; }
     }
 }
