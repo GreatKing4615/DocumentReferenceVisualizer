@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -7,16 +8,16 @@ namespace Document_Reference_Visualizer
 {
     public partial class Form1 : Form
     {
-        private int[][] xCoords;
-        private int[][] yCoords;
+        private int[][] coords;
         private int countDocument;
         private Random rnd=new Random();
+        private Dictionary<int, int[]> coordNum = new Dictionary<int, int[]>();
+        private List<Document> documents = new List<Document>();
         Rectangle rectangle;
         Graphics graph;
         public Form1()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -26,8 +27,8 @@ namespace Document_Reference_Visualizer
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            try
-            {
+            //try
+            //{
                 Document document = new Document();
                 openFileDialog1.ShowDialog();
                 document.path = Path.GetDirectoryName(openFileDialog1.FileName);
@@ -38,13 +39,25 @@ namespace Document_Reference_Visualizer
                 countDocumentLabel.Text = countDocument.ToString();
                 DrawingСoordinates();
                 ChangeCoords(document);
+                RefreshPaint();
                 //PrintRectangle(document);
-            }
-            catch (Exception ex)
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+        }
+
+        private void RefreshPaint()
+        {
+            int[] _coord;
+            foreach(Document document in documents)
             {
-                MessageBox.Show(ex.Message);
+                _coord = coordNum[document.numCoord];
+                graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
             }
         }
+
         /// <summary>
         /// drawing a grid
         /// </summary>
@@ -56,25 +69,30 @@ namespace Document_Reference_Visualizer
             int cellWidth = pictureBox1.Width / countDocument;
             int cellHeight = pictureBox1.Height / countDocument;
             Pen p = new Pen(Color.Black);
-            xCoords = new int[numOfCells][];
-            yCoords = new int[numOfCells][];
-            for (int y = 0, x = 0; y < numOfCells; ++y,++x)
+            coords = new int[numOfCells][];
+            int num=0,offset;
+            for (int y = 0; y < numOfCells; ++y)
             {
+                offset = 0;
                 graph.DrawLine(p, 0, y * cellHeight, numOfCells * cellWidth, y * cellHeight);
-                graph.DrawLine(p, x * cellWidth, 0, x * cellWidth, numOfCells * cellHeight);
-                for (int j = 0; j <= numOfCells; j++)
+                graph.DrawLine(p, y * cellWidth, 0, y * cellWidth, numOfCells * cellHeight);
+                coords[y] = new int[numOfCells];
+                for (int j = 0; j < numOfCells; ++j)
                 {
-                    //graph.DrawString(x.ToString(), new Font("Arial", 8), Brushes.Red, new Point(x * cellWidth - (cellWidth / 2), j * cellHeight - (cellHeight / 2)));
-                    //graph.DrawString(y.ToString(), new Font("Arial", 8), Brushes.Blue, new Point(j * cellWidth - (cellWidth / 2) + 10, y * cellHeight - (cellHeight / 2)));
-                    //xCoords[j] = new int[2];
-                    //xCoords[j][0] = x * cellWidth - (cellWidth / 2);
-                    //xCoords[j][1] = 0;
-                    //yCoords[j] = new int[2];
-                    //yCoords[j][0] = pictureBox1.Width / countDocument;
-                    //yCoords[j][1] = 0;
+                    coords[j] = new int[4];
+                    coords[j][0] = y * cellWidth + (cellWidth / 2);//x
+                    coords[j][1] = j * cellHeight + (cellHeight / 2);//y
+                    coords[j][2] = num+offset;//coordinate number
+                    coords[j][3] = 0;//availability
+                    offset++;
+                    if (!coordNum.ContainsKey(coords[j][2]))
+                        coordNum.Add(coords[j][2], coords[j]);
+                    else
+                        coordNum[coords[j][2]] = coords[j];
+                    //graph.DrawString(coordNum[coords[j][2]].ToString(), new Font("Arial", 8), Brushes.Red, new Point(coordNum[coords[j][2]][1] , coordNum[coords[j][2]][2]));
                 }
+                num += offset;
             }
-
         }
         /// <summary>
         /// selection of coordinates for the document
@@ -83,27 +101,21 @@ namespace Document_Reference_Visualizer
         private void ChangeCoords(Document document) {
             while (true)
             {
-                int temp = rnd.Next(countDocument-1);
-                if (xCoords[temp][1] == 0)
+                int temp = rnd.Next(countDocument*countDocument);
+                int[] coord = coordNum[temp];
+                if ( coord[3] == 0 )
                 {
-                    xCoords[temp][1] = 1;
-                    document.x = xCoords[temp][1]+(countDocument/2);
-                    break; 
-                }
-                else continue;
-            }
-            while (true)
-            {
-                int temp = rnd.Next(countDocument-1);
-                if (yCoords[temp][1] == 0)
-                {
-                    yCoords[temp][1] = 1;
-                    document.y = yCoords[temp][1] + (countDocument / 2);
+                    coord[3] = 1;
+                    document.x = coord[0];
+                    document.y = coord[1];
+                    document.numCoord = coord[2];
+                    coordNum[temp] = coord;
+                    documents.Add(document);
                     break;
                 }
                 else continue;
             }
-            graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(document.x,document.y ));
+            //graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(document.x,document.y ));
         }
 
         private void PrintRectangle(Document document)
