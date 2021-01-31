@@ -13,6 +13,8 @@ namespace Document_Reference_Visualizer
         private Random rnd=new Random();
         private Dictionary<int, int[]> coordNum = new Dictionary<int, int[]>();
         private List<Document> documents = new List<Document>();
+        int cellWidth;
+        int cellHeight;
         Rectangle rectangle;
         Graphics graph;
         public Form1()
@@ -54,6 +56,7 @@ namespace Document_Reference_Visualizer
             foreach(Document document in documents)
             {
                 _coord = coordNum[document.numCoord];
+                PrintRectangle(document);
                 graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
             }
         }
@@ -66,8 +69,8 @@ namespace Document_Reference_Visualizer
             graph = pictureBox1.CreateGraphics();
             graph.Clear(Color.White);
             int numOfCells = countDocument;
-            int cellWidth = pictureBox1.Width / countDocument;
-            int cellHeight = pictureBox1.Height / countDocument;
+            cellWidth = pictureBox1.Width / countDocument;
+            cellHeight = pictureBox1.Height / countDocument;
             Pen p = new Pen(Color.Black);
             coords = new int[numOfCells][];
             int num=0,offset;
@@ -88,7 +91,10 @@ namespace Document_Reference_Visualizer
                     if (!coordNum.ContainsKey(coords[j][2]))
                         coordNum.Add(coords[j][2], coords[j]);
                     else
+                    {
+                        coords[j][3] = 1;
                         coordNum[coords[j][2]] = coords[j];
+                    }
                     //graph.DrawString(coordNum[coords[j][2]].ToString(), new Font("Arial", 8), Brushes.Red, new Point(coordNum[coords[j][2]][1] , coordNum[coords[j][2]][2]));
                 }
                 num += offset;
@@ -120,9 +126,9 @@ namespace Document_Reference_Visualizer
 
         private void PrintRectangle(Document document)
         {
-            int width = countDocument;
-            graph.FillRectangle(Brushes.White, new Rectangle(document.x, document.y, 40, 40));
-            graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Black,new Point(document.x, document.y));
+            int[] _coord = coordNum[document.numCoord];
+            graph.FillRectangle(Brushes.LightGray, new Rectangle(_coord[0]-cellWidth/4, _coord[1]-cellHeight/4, cellWidth/2,cellHeight/2));
+            //graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Black,new Point(document.x, document.y));
         }
     }
 }
