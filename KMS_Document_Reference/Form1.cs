@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 
@@ -8,14 +9,14 @@ namespace Document_Reference_Visualizer
 {
     public partial class Form1 : Form
     {
-        private int[][] coords;
+        private int[][] coords;//XY documents
         private int countDocument;
         private Random rnd=new Random();
-        private Dictionary<int, int[]> coordNum = new Dictionary<int, int[]>();
-        private List<Document> documents = new List<Document>();
+        private Dictionary<int, int[]> coordNum = new Dictionary<int, int[]>();// serial number of each document
+        private List<Document> documents = new List<Document>();//documents
         int cellWidth;
         int cellHeight;
-        Rectangle rectangle;
+        int numOfCells;
         Graphics graph;
         public Form1()
         {
@@ -24,7 +25,12 @@ namespace Document_Reference_Visualizer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //textBox1.Text += SearchEngine.BoyerMoore(ResourceTextBox.Text, TemplateTextBox.Text, SenseCheck.Checked);
+            countDocument = cellHeight = cellWidth = 0;
+            documents.Clear();
+            coordNum.Clear();
+            coords = null;
+            countDocumentLabel.Text = "0";
+            Refresh();
         }
 
         private void OpenFileButton_Click(object sender, EventArgs e)
@@ -44,13 +50,13 @@ namespace Document_Reference_Visualizer
                 ChangeCoords(document);
                 SearchReference(document);
                 DrawLine();
-                RefreshPaint();            
+                RefreshPaint();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-}
+        }
 
         /// <summary>
         /// Search documents in all docs
@@ -61,11 +67,11 @@ namespace Document_Reference_Visualizer
             foreach (Document docSource in documents)
             {
                 if (docTemplate == docSource) continue;
-                if (SearchEngine.BoyerMoore(docSource.ReadText(), docTemplate.fileNameWithoutExtencion))
+                if (SearchEngine.BoyerMoore(docSource.ReadText(), docTemplate.fileNameWithoutExtencion,SenseCheck.Checked))
                 {
                     docTemplate.reference.Add(docSource);
                 }
-                if (SearchEngine.BoyerMoore(docTemplate.ReadText(), docSource.fileNameWithoutExtencion))
+                if (SearchEngine.BoyerMoore(docTemplate.ReadText(), docSource.fileNameWithoutExtencion,SenseCheck.Checked))
                 {
                     docSource.reference.Add(docTemplate);
                 }
@@ -84,7 +90,6 @@ namespace Document_Reference_Visualizer
                 PrintRectangle(document);
                 graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
             }
-            textBox1.Text = string.Empty;
         }
 
         /// <summary>
@@ -94,7 +99,7 @@ namespace Document_Reference_Visualizer
         {
             graph = pictureBox1.CreateGraphics();
             graph.Clear(Color.White);
-            int numOfCells = countDocument;
+            numOfCells = countDocument;
             cellWidth = pictureBox1.Width / countDocument;
             cellHeight = pictureBox1.Height / countDocument;
             Pen p = new Pen(Color.Black);
@@ -167,8 +172,11 @@ namespace Document_Reference_Visualizer
         {
             int[] _coordDoc;
             Point p1 = new Point();
+
             Point p2 = new Point();
-            foreach(Document document in documents)
+            Pen pen = new Pen(Brushes.Black);
+            pen.CustomEndCap = new AdjustableArrowCap(6, 6);
+            foreach (Document document in documents)
             {
                 _coordDoc = coordNum[document.numCoord];
                 p1.X = _coordDoc[0];
@@ -176,10 +184,54 @@ namespace Document_Reference_Visualizer
                 if (document.reference.Count != 0)
                     foreach(Document doc in document.reference) {
                         _coordDoc = coordNum[doc.numCoord];
-                        p2.X = _coordDoc[0];
-                        p2.Y = _coordDoc[1];
-                        graph.DrawLine(new Pen(Brushes.Black), p1, p2);
+                        p2.X = _coordDoc[0]-cellWidth/4;
+                        p2.Y = _coordDoc[1]+cellHeight/4;
+
+                        if (p1.X > p2.X)
+                        {
+                            p2.X = _coordDoc[0] + cellWidth / 4;
+                        }
+                        if (p1.Y < p2.Y)
+                        {
+                            p2.Y = _coordDoc[1] -cellHeight / 4;
+
+                        }
+
+                        graph.DrawLine(pen, p1, p2);
                     }
+            }
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            int x = Convert.ToInt32(e.X); 
+            int y = Convert.ToInt32(e.Y);
+
+            for (int i = 0; i < numOfCells; ++i)
+            {
+                for (int j = 0; j < numOfCells; ++j)
+                {
+                    coords[j][0] = i * cellWidth + (cellWidth / 2);//x
+                    coords[j][1] = j * cellHeight + (cellHeight / 2);//y
+                }
+            }
+            foreach(int [] coord in coords)
+            {
+                if(coord[0]<x && coord[1] < y)
+                {
+
+                    graph.FillRectangle(Brushes.Red, new Rectangle(coord[0] - cellWidth / 4, coord[1] - cellHeight / 4, cellWidth / 8, cellHeight / 8));
+                }
             }
         }
     }
