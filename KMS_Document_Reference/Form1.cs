@@ -24,32 +24,57 @@ namespace Document_Reference_Visualizer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Text += SearchEngine.BoyerMoore(ResourceTextBox.Text, TemplateTextBox.Text, SenseCheck.Checked);
+            //textBox1.Text += SearchEngine.BoyerMoore(ResourceTextBox.Text, TemplateTextBox.Text, SenseCheck.Checked);
         }
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            //try
-            //{
+            try
+            {
                 Document document = new Document();
                 openFileDialog1.ShowDialog();
                 document.path = Path.GetDirectoryName(openFileDialog1.FileName);
                 document.fileName = Path.GetFileName(openFileDialog1.FileName);
+                document.fileNameWithoutExtencion = Path.GetFileNameWithoutExtension(openFileDialog1.FileName);
 
 
                 countDocument++;
                 countDocumentLabel.Text = countDocument.ToString();
                 DrawingСoordinates();
                 ChangeCoords(document);
-                RefreshPaint();
-                //PrintRectangle(document);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
+                SearchReference(document);
+                DrawLine();
+                RefreshPaint();            
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+}
+
+        /// <summary>
+        /// Search documents in all docs
+        /// </summary>
+        /// <param name="docTemplate"></param>
+        private void SearchReference(Document docTemplate)
+        {
+            foreach (Document docSource in documents)
+            {
+                if (docTemplate == docSource) continue;
+                if (SearchEngine.BoyerMoore(docSource.ReadText(), docTemplate.fileNameWithoutExtencion))
+                {
+                    docTemplate.reference.Add(docSource);
+                }
+                if (SearchEngine.BoyerMoore(docTemplate.ReadText(), docSource.fileNameWithoutExtencion))
+                {
+                    docSource.reference.Add(docTemplate);
+                }
+            }
         }
 
+        /// <summary>
+        /// Refresh Paint
+        /// </summary>
         private void RefreshPaint()
         {
             int[] _coord;
@@ -59,6 +84,7 @@ namespace Document_Reference_Visualizer
                 PrintRectangle(document);
                 graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
             }
+            textBox1.Text = string.Empty;
         }
 
         /// <summary>
@@ -77,8 +103,9 @@ namespace Document_Reference_Visualizer
             for (int y = 0; y < numOfCells; ++y)
             {
                 offset = 0;
-                graph.DrawLine(p, 0, y * cellHeight, numOfCells * cellWidth, y * cellHeight);
-                graph.DrawLine(p, y * cellWidth, 0, y * cellWidth, numOfCells * cellHeight);
+                //paint grid
+                //graph.DrawLine(p, 0, y * cellHeight, numOfCells * cellWidth, y * cellHeight);
+                //graph.DrawLine(p, y * cellWidth, 0, y * cellWidth, numOfCells * cellHeight);
                 coords[y] = new int[numOfCells];
                 for (int j = 0; j < numOfCells; ++j)
                 {
@@ -123,12 +150,37 @@ namespace Document_Reference_Visualizer
             }
             //graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(document.x,document.y ));
         }
-
+        /// <summary>
+        /// print rectangle
+        /// </summary>
+        /// <param name="document"></param>
         private void PrintRectangle(Document document)
         {
             int[] _coord = coordNum[document.numCoord];
             graph.FillRectangle(Brushes.LightGray, new Rectangle(_coord[0]-cellWidth/4, _coord[1]-cellHeight/4, cellWidth/2,cellHeight/2));
             //graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Black,new Point(document.x, document.y));
+        }
+        /// <summary>
+        /// print line
+        /// </summary>
+        private void DrawLine()
+        {
+            int[] _coordDoc;
+            Point p1 = new Point();
+            Point p2 = new Point();
+            foreach(Document document in documents)
+            {
+                _coordDoc = coordNum[document.numCoord];
+                p1.X = _coordDoc[0];
+                p1.Y = _coordDoc[1];
+                if (document.reference.Count != 0)
+                    foreach(Document doc in document.reference) {
+                        _coordDoc = coordNum[doc.numCoord];
+                        p2.X = _coordDoc[0];
+                        p2.Y = _coordDoc[1];
+                        graph.DrawLine(new Pen(Brushes.Black), p1, p2);
+                    }
+            }
         }
     }
 }

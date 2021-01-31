@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Document_Reference_Visualizer
 {
@@ -29,7 +30,7 @@ namespace Document_Reference_Visualizer
         ///<param name="readsource">source string</param>
         ///<param name="readtemplate">template</param>
         ///<param name="sensitivity">Case sensitivity</param>
-        public static string BoyerMoore(string readsource, string readtemplate, bool sensitivity = false)
+        public static bool BoyerMoore(string readsource, string readtemplate, bool sensitivity = false)
         {
             var source = readsource;
             var template = readtemplate;
@@ -44,15 +45,15 @@ namespace Document_Reference_Visualizer
 
             if (template.Length > source.Length)
             {
-                return ("Error: tmp > src");
+                return false;// MessageBox.Show ("Error: tmp > src");
             }
 
             if (template == source)
             {
-                return ("Шаблон и исходная строка равны");
+                return true;// MessageBox.Show("Шаблон и исходная строка равны");
             }
 
-            for (int i = template.Length; i < source.Length + 1;)                         // Основной цикл
+            for (int i = template.Length; i < source.Length ;)                         // Основной цикл
             {
                 for (int j = template.Length - 1; j >= 0; j--)                            // Цикл проверки на совпадения
                 {
@@ -60,7 +61,7 @@ namespace Document_Reference_Visualizer
                     {
                         if (j == 0)                                                       // Если первый символ шаблона схож с текущим символом исходной строки
                         {
-                            return ($"Шаблон найден на {((i - template.Length) + 1)} символе строки.");
+                            return true;// MessageBox.Show($"Шаблон найден на {((i - template.Length) + 1)} символе строки.");
                         }
                     }
                     else
@@ -70,7 +71,7 @@ namespace Document_Reference_Visualizer
                     }
                 }
             }
-            return ("Шаблон не был найден в исходной строке.");
+            return false;//   MessageBox.Show("Шаблон не был найден в исходной строке.");
         }
     }
 }

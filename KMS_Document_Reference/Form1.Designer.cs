@@ -30,6 +30,8 @@ namespace Document_Reference_Visualizer
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.countDocumentLabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.OpenFileButton = new System.Windows.Forms.Button();
             this.SenseCheck = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,10 +42,8 @@ namespace Document_Reference_Visualizer
             this.TemplateTextBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.countDocumentLabel = new System.Windows.Forms.Label();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -68,6 +68,23 @@ namespace Document_Reference_Visualizer
             this.panel1.Size = new System.Drawing.Size(220, 764);
             this.panel1.TabIndex = 0;
             // 
+            // countDocumentLabel
+            // 
+            this.countDocumentLabel.AutoSize = true;
+            this.countDocumentLabel.Location = new System.Drawing.Point(148, 221);
+            this.countDocumentLabel.Name = "countDocumentLabel";
+            this.countDocumentLabel.Size = new System.Drawing.Size(0, 13);
+            this.countDocumentLabel.TabIndex = 10;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 221);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(132, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Количество документов:";
+            // 
             // OpenFileButton
             // 
             this.OpenFileButton.Location = new System.Drawing.Point(10, 176);
@@ -91,7 +108,7 @@ namespace Document_Reference_Visualizer
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 120);
+            this.label3.Location = new System.Drawing.Point(12, 321);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 6;
@@ -99,9 +116,10 @@ namespace Document_Reference_Visualizer
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(10, 136);
+            this.textBox1.Location = new System.Drawing.Point(10, 349);
+            this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(198, 20);
+            this.textBox1.Size = new System.Drawing.Size(198, 349);
             this.textBox1.TabIndex = 3;
             // 
             // label2
@@ -157,11 +175,6 @@ namespace Document_Reference_Visualizer
             this.panel2.Size = new System.Drawing.Size(1231, 764);
             this.panel2.TabIndex = 1;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "Text files (*.txt;*.doc;*.docx)|*.txt;*.doc;*.docx|All files (*.*)|*.*";
-            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.SystemColors.Info;
@@ -172,22 +185,10 @@ namespace Document_Reference_Visualizer
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // label4
+            // openFileDialog1
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 221);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(132, 13);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Количество документов:";
-            // 
-            // countDocumentLabel
-            // 
-            this.countDocumentLabel.AutoSize = true;
-            this.countDocumentLabel.Location = new System.Drawing.Point(148, 221);
-            this.countDocumentLabel.Name = "countDocumentLabel";
-            this.countDocumentLabel.Size = new System.Drawing.Size(0, 13);
-            this.countDocumentLabel.TabIndex = 10;
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Text files (*.txt;*.doc;*.docx)|*.txt;*.doc;*.docx|All files (*.*)|*.*";
             // 
             // Form1
             // 

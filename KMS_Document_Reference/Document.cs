@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Document_Reference_Visualizer
 {
@@ -9,6 +10,18 @@ namespace Document_Reference_Visualizer
         public int numCoord { get; set; }
         public string path { get; set; }
         public string fileName{ get; set; }
-        public List<string> reference { get; set; }
+        public string fileNameWithoutExtencion{ get; set; }
+        public List<Document> reference = new List<Document>();
+
+        public string ReadText()
+        {
+            using (FileStream fstream = File.OpenRead(path+"\\"+fileName))
+            {
+                byte[] array = new byte[fstream.Length];
+                fstream.Read(array, 0, array.Length);
+                string textFromFile = System.Text.Encoding.Default.GetString(array);
+                return textFromFile;
+            }
+        }
     }
 }
