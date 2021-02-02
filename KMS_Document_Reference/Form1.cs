@@ -17,6 +17,7 @@ namespace Document_Reference_Visualizer
         int cellWidth;
         int cellHeight;
         int numOfCells;
+        int num;
         Graphics graph;
         public Form1()
         {
@@ -35,8 +36,8 @@ namespace Document_Reference_Visualizer
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            try
-            {
+            //try
+            //{
                 Document document = new Document();
                 openFileDialog1.ShowDialog();
                 document.path = Path.GetDirectoryName(openFileDialog1.FileName);
@@ -51,11 +52,11 @@ namespace Document_Reference_Visualizer
                 SearchReference(document);
                 DrawLine();
                 RefreshPaint();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         /// <summary>
@@ -88,7 +89,10 @@ namespace Document_Reference_Visualizer
             {
                 _coord = coordNum[document.numCoord];
                 PrintRectangle(document);
-                graph.DrawString(document.fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
+                var _fileName = document.fileName;
+                if (document.fileName.Length>14)
+                _fileName = document.fileName.Substring(0, 15) + "...";
+                graph.DrawString(_fileName, new Font("Arial", 8), Brushes.Blue, new Point(_coord[0], _coord[1]));
             }
         }
 
@@ -104,7 +108,8 @@ namespace Document_Reference_Visualizer
             cellHeight = pictureBox1.Height / countDocument;
             Pen p = new Pen(Color.Black);
             coords = new int[numOfCells][];
-            int num=0,offset;
+            num = 0;
+            int offset;
             for (int y = 0; y < numOfCells; ++y)
             {
                 offset = 0;
@@ -194,7 +199,6 @@ namespace Document_Reference_Visualizer
                         if (p1.Y < p2.Y)
                         {
                             p2.Y = _coordDoc[1] -cellHeight / 4;
-
                         }
 
                         graph.DrawLine(pen, p1, p2);
@@ -202,35 +206,45 @@ namespace Document_Reference_Visualizer
             }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            int x = Convert.ToInt32(e.X); 
+            ReferenceList.Items.Clear();
+            int x = Convert.ToInt32(e.X);
             int y = Convert.ToInt32(e.Y);
+            int[] _coord;
 
-            for (int i = 0; i < numOfCells; ++i)
+            for (int i = 0; i < num; i++)
             {
-                for (int j = 0; j < numOfCells; ++j)
+                _coord = coordNum[i];
+                if (_coord[0] - cellWidth / 4 < x && _coord[0] + cellWidth / 4 > x && _coord[1] - cellHeight / 4 < y && _coord[1] + cellHeight / 4 > y)
                 {
-                    coords[j][0] = i * cellWidth + (cellWidth / 2);//x
-                    coords[j][1] = j * cellHeight + (cellHeight / 2);//y
+                    var _doc = documents.Find(t => t.numCoord == i);
+                    toolTip1.SetToolTip(pictureBox1, _doc.fileName);
                 }
             }
-            foreach(int [] coord in coords)
-            {
-                if(coord[0]<x && coord[1] < y)
-                {
 
-                    graph.FillRectangle(Brushes.Red, new Rectangle(coord[0] - cellWidth / 4, coord[1] - cellHeight / 4, cellWidth / 8, cellHeight / 8));
+        }
+
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ReferenceList.Items.Clear();
+            int x = Convert.ToInt32(e.X);
+            int y = Convert.ToInt32(e.Y);
+            int[] _coord;
+
+            for (int i = 0; i < num; i++)
+            {
+                _coord = coordNum[i];
+                if (_coord[0] - cellWidth / 4 < x && _coord[0] + cellWidth / 4 > x && _coord[1] - cellHeight / 4 < y && _coord[1] + cellHeight / 4 > y)
+                {
+                    //graph.FillRectangle(Brushes.Red, new Rectangle(_coord[0] + cellWidth / 4, _coord[1] + cellHeight / 4, cellWidth / 8, cellHeight / 8));
+                    var docRef = documents.Find(t => t.numCoord == i);
+                    int j = 0;
+                    foreach (Document docs in docRef.reference)
+                    {
+                        ReferenceList.Items.Add($"{j + 1})" + docs.fileName);
+                        j++;
+                    }
                 }
             }
         }

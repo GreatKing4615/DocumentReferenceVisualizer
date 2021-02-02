@@ -29,6 +29,7 @@ namespace Document_Reference_Visualizer
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ReferenceList = new System.Windows.Forms.ListBox();
             this.countDocumentLabel = new System.Windows.Forms.Label();
@@ -40,6 +41,7 @@ namespace Document_Reference_Visualizer
             this.panel2 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -67,7 +69,6 @@ namespace Document_Reference_Visualizer
             this.ReferenceList.Name = "ReferenceList";
             this.ReferenceList.Size = new System.Drawing.Size(199, 329);
             this.ReferenceList.TabIndex = 11;
-            this.ReferenceList.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // countDocumentLabel
             // 
@@ -137,15 +138,15 @@ namespace Document_Reference_Visualizer
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Info;
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1231, 764);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
+            this.pictureBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDoubleClick);
             // 
             // openFileDialog1
             // 
@@ -182,6 +183,7 @@ namespace Document_Reference_Visualizer
         private System.Windows.Forms.Label countDocumentLabel;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox ReferenceList;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
